@@ -1,7 +1,7 @@
 {
   "name": "acc-test",
   "version": "0.1.0",
-  "homepage": "https://kou1046.github.io/Measuring-acc",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
