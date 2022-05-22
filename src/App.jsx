@@ -198,7 +198,7 @@ export const App = () => {
         return (
             <div>
                 <div style={{ border: 'solid 1px' }}>
-                    <Line data={data} options={options1} height={500}/>
+                    <Line data={data} options={options1}/>
                 </div>
                 <div style={{ border: 'solid 1px', marginTop: '1em' }}>
                     <Line data={data2} options={options2} />
