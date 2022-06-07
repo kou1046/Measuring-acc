@@ -83,19 +83,14 @@ export const App = () => {
     const checkDialog = () => {
         if (navigator.userAgent.match('iPhone|iPad')) {
             window.DeviceMotionEvent.requestPermission().then((res) => {
-                if (res === 'granted') {
-                    window.addEventListener('devicemotion', getAcceleration);
-                    window.addEventListener('deviceorientation', getGyro);
-                    setIsArrow(true);
-                } else {
+                if (res != 'granted') {
                     alert('ブラウザを再起動してセンサー利用の許可をして下さい！');
                     return
-                }
-            })
-        } else {
-            setIsArrow(true);
+        }})
         }
-
+        window.addEventListener('devicemotion', getAcceleration);
+        window.addEventListener('deviceorientation', getGyro);
+        setIsArrow(true);
     }
 
     const renderCsvBtn = () => {
