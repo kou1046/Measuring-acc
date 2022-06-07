@@ -219,7 +219,6 @@ export const App = () => {
     if (!DeviceOrientationEvent.requestPermission && !navigator.userAgent.match('Android.+Mobile')) {
         return (
             <>  
-                {test()}
                 <p>pcでは利用できません</p>
             </>
         )
