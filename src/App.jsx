@@ -7,24 +7,24 @@ import { dft } from './common_function';
 Chart.register(...registerables)
 
 export const App = () => {
-    const isTouch = useRef(false);
     const isActive = useRef(false);
+    const isRecording = useRef(false);
     const startTime = useRef(0);
     const curAcc = useRef({
-        t: [],
-        x: [],
-        y: [],
-        z: [],
+        t: [0],
+        x: [0],
+        y: [0],
+        z: [0],
     });
     const [isArrow, setIsArrow] = useState(false);
     const [measurementTime, setMeasurementTime] = useState(0);
     const [resultAcc, setResultAcc] = useState(null);
 
     const getAcceleration = (event) => {
-        if (isTouch.current) {
-            if (!isActive.current) {
+        if (isActive.current) {
+            if (!isRecording.current) {
                 startTime.current = Date.now();
-                isActive.current = true;
+                isRecording.current = true;
                 return
             }
             const { x: newX, y: newY, z: newZ } = event.acceleration;
@@ -32,12 +32,19 @@ export const App = () => {
             const newT = (Date.now() - startTime.current) / 1000;
             curAcc.current = { t: [...t, newT], x: [...x, newX], y: [...y, newY], z: [...z, newZ] };
         } else {
-            if (isActive.current) {
+            if (isRecording.current) {
                 setResultAcc(curAcc.current);
                 setMeasurementTime((Date.now() - startTime.current) / 1000);
-                curAcc.current = { t: [], x: [], y: [], z: [] };
-                isActive.current = false;
+                curAcc.current = { t: [0], x: [0], y: [0], z: [0] };
+                isRecording.current = false;
             }
+        }
+    }
+
+    const activeSpecificTime = (time) => {
+        isActive.current = true
+        if ((Date.now() - startTime.current) / 1000 >= time && isRecording.current ){
+            isActive.current = false
         }
     }
 
@@ -63,6 +70,7 @@ export const App = () => {
 
     }
 
+
     const renderCsvBtn = () => {
         const { t, x, y, z } = resultAcc
         const data = [
@@ -73,6 +81,7 @@ export const App = () => {
         ];
         return <CSVLink filename='Acceleration_data.csv' data={data}>Download CSV</CSVLink>
     }
+
 
     const renderChart = () => {
         const N = resultAcc.t.length;
@@ -234,10 +243,12 @@ export const App = () => {
     return (
         <>
             <div style={{ textAlign: 'center', marginTop: 100 }}>
-                <p><button style={buttonStyle}
-                    onTouchEnd={() => isTouch.current = false}
-                    onTouchStart={() => isTouch.current = true}>
-                    長押しで計測</button></p>
+                <button style={buttonStyle}
+                    onTouchEnd={() => isActive.current = false}
+                    onTouchStart={() => isActive.current = true}>
+                    長押しで計測</button>
+                <button style={buttonStyle} onClick={() => activeSpecificTime(5)}>5秒測定</button>
+                <button style={buttonStyle} onClick={() => activeSpecificTime(10)}>10秒測定</button>
                 {resultAcc ? renderChart() : null}
                 <p>計測時間 : {measurementTime} [sec]</p>
                 <p>{resultAcc ? renderCsvBtn() : null}</p>
